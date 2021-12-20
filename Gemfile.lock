@@ -10,8 +10,9 @@ PATH
   remote: .
   specs:
     bullet_train-roles (0.1.0)
-      knapsack_pro (~> 3.1.0)
-      standard (~> 1.5.0)
+      active_hash
+      activesupport
+      cancancan
 
 GEM
   remote: https://rubygems.org/
@@ -64,9 +65,10 @@ PLATFORMS
 DEPENDENCIES
   active_hash!
   bullet_train-roles!
-  cancancan (~> 3.3.0)
+  knapsack_pro (~> 3.1.0)
   minitest (~> 5.0)
   rake (~> 13.0)
+  standard (~> 1.5.0)
 
 BUNDLED WITH
    2.2.15
