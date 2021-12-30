@@ -1,0 +1,8 @@
+Description:
+  Adds a Swagger to your Rails API
+
+Example:
+    rails generate bullet_train:roles:install
+
+    This will create:
+        config/models/roles.yml

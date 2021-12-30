@@ -170,7 +170,7 @@ class Role < ActiveYaml::Base
       current = nil
 
       until ary.empty?
-        current = "#{ary.pop}#{"_" unless current.nil?}#{current}"
+        current = "#{ary.pop}#{'_' unless current.nil?}#{current}"
         possibilities << current
       end
 

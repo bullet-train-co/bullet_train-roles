@@ -1,0 +1,12 @@
+default:
+  models:
+
+editor:
+  models:
+
+admin:
+  includes:
+    - editor
+  manageable_roles:
+    - admin
+    - editor
