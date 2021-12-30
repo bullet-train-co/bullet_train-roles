@@ -6,7 +6,7 @@ require 'rails/generators'
 module BulletTrain
   module Roles
     class InstallGenerator < Rails::Generators::Base
-      source_root File.expand_path('../templates', __dir__)
+      source_root File.expand_path('templates', __dir__)
 
       def add_roles_config_file
         puts("Creating role.yml inside config/models with default roles\n")
@@ -170,7 +170,7 @@ module BulletTrain
         puts("Adding 'permit user, through: :#{top_level_model.downcase}, parent: :#{associated_model.downcase}' to #{associated_model}\n\n")
 
         if line_exists_in_file?(file_location, content_to_add)
-          message = "#{remove_new_lines_and_spaces(content_to_add)} has already been added to #{associated_model}"
+          message = "#{remove_new_lines_and_spaces(content_to_add)} already exists in #{associated_model}!!\n\n"
 
           return line_already_exists(message)
         end
