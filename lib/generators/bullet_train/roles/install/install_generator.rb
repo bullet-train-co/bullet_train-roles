@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
-require 'active_record'
-require 'rails/generators'
+require "active_record"
+require "rails/generators"
 
 module BulletTrain
   module Roles
     class InstallGenerator < Rails::Generators::Base
-      source_root File.expand_path('templates', __dir__)
+      source_root File.expand_path("templates", __dir__)
 
       def add_roles_config_file
         puts("Creating role.yml inside config/models with default roles\n")
 
-        copy_file 'roles.yml', 'config/models/roles.yml'
+        copy_file "roles.yml", "config/models/roles.yml"
 
         puts("Success 🎉🎉\n\n")
       end
@@ -61,10 +61,10 @@ module BulletTrain
         adapter_name = db_adapter
 
         case adapter_name
-        when 'postgresql'
-          'jsonb'
+        when "postgresql"
+          "jsonb"
         else
-          'json'
+          "json"
         end
       end
 
@@ -78,7 +78,7 @@ module BulletTrain
           updated_line = line
 
           if line.include?(line_pattern)
-            trimmed_line = line.tr("\n", '')
+            trimmed_line = line.tr("\n", "")
 
             updated_line = "#{trimmed_line}#{content_to_add}"
           end
@@ -134,7 +134,7 @@ module BulletTrain
       end
 
       def remove_new_lines_and_spaces(line)
-        line.tr("\n", '').strip
+        line.tr("\n", "").strip
       end
 
       def include_role_support_in_top_level_model(model_name)
@@ -163,8 +163,8 @@ module BulletTrain
         # TODO: need to make this more smart e.g.
         # 1. should know what parameter is used for user e.g. def initialize(user)
         # 2. what if code doesn't include "if user.present?", maybe we need to handle that, consult with Andrew
-        file_location = 'app/models/ability.rb'
-        line_to_match = 'if user.present?'
+        file_location = "app/models/ability.rb"
+        line_to_match = "if user.present?"
         content_to_add = "\n      permit user, through: :#{top_level_model.downcase.pluralize}, parent: :#{associated_model.downcase}\n"
 
         puts("Adding 'permit user, through: :#{top_level_model.downcase}, parent: :#{associated_model.downcase}' to #{associated_model}\n\n")
