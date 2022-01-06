@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'active_hash'
+require "active_hash"
 
 class RemovingLastTeamAdminException < RuntimeError; end
 
@@ -170,7 +170,7 @@ class Role < ActiveYaml::Base
       current = nil
 
       until ary.empty?
-        current = "#{ary.pop}#{'_' unless current.nil?}#{current}"
+        current = "#{ary.pop}#{"_" unless current.nil?}#{current}"
         possibilities << current
       end
 
@@ -183,14 +183,14 @@ class Role < ActiveYaml::Base
       return nil unless @parent_ids
 
       if @model == @parent
-        return @condition = { id: @parent_ids }
+        return @condition = {id: @parent_ids}
       end
 
       parent_association = possible_parent_associations.find { |association| @model.method_defined? association }
 
       return nil unless parent_association.present?
 
-      @condition = { parent_association => { id: @parent_ids } }
+      @condition = {parent_association => {id: @parent_ids}}
     end
   end
 end
