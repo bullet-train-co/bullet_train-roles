@@ -2,8 +2,11 @@
 
 require "active_hash"
 
+<<<<<<< HEAD
 class RemovingLastTeamAdminException < RuntimeError; end
 
+=======
+>>>>>>> main
 class Role < ActiveYaml::Base
   include ActiveYaml::Aliases
   set_root_path "config/models"

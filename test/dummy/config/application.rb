@@ -29,7 +29,14 @@ module Dummy
     # Don't generate system test files.
     config.generators.system_tests = nil
 
+<<<<<<< HEAD
     # set factory path so dummy app can find them while running tests
     config.factory_bot.definition_file_paths += [File.expand_path("../../factories", __dir__)] if defined?(FactoryBotRails)
+=======
+    config.factory_bot.definition_file_paths += [File.expand_path("../../factories", __dir__)] if defined?(FactoryBotRails)
+
+    Role.set_root_path("config/models")
+    Role.set_filename("roles")
+>>>>>>> main
   end
 end

@@ -25,9 +25,11 @@ module BulletTrain
 
         include_role_support_in_top_level_model(top_level_model)
 
-        associated_model = ask("Which model/association of #{top_level_model} do you consider to be the Team? (Default to Team)") || "Team"
+        associated_model = ask("Which model/association of #{top_level_model} do you consider to be the Team? (Defaults to Team)") || "Team"
 
+        include_cancan_ability_in_ability_model(associated_model)
         add_permit_to_ability_model(top_level_model, associated_model)
+        add_concern_to_user
       end
 
       private
@@ -156,23 +158,56 @@ module BulletTrain
         puts("Success 🎉🎉\n\n")
       end
 
-      def add_permit_to_ability_model(top_level_model, associated_model)
-        # TODO: need to make this more smart e.g.
-        # 1. should know what parameter is used for user e.g. def initialize(user)
-        # 2. what if code doesn't include "if user.present?", maybe we need to handle that, consult with Andrew
+      def include_cancan_ability_in_ability_model(associated_model)
         file_location = "app/models/ability.rb"
-        line_to_match = "if user.present?"
-        content_to_add = "\n      permit user, through: :#{top_level_model.downcase.pluralize}, parent: :#{associated_model.downcase}\n"
+        line_to_match = "include CanCan::Ability"
+        content_to_add = "\n  include Roles::Permit\n"
 
-        puts("Adding 'permit user, through: :#{top_level_model.downcase}, parent: :#{associated_model.downcase}' to #{associated_model}\n\n")
+        puts("Adding 'include Roles::Permit' to #{associated_model}\n\n")
 
         if line_exists_in_file?(file_location, content_to_add)
           message = "#{remove_new_lines_and_spaces(content_to_add)} already exists in #{associated_model}!!\n\n"
 
-          return line_already_exists(message)
+          line_already_exists(message)
+        else
+          add_in_file(file_location, line_to_match, content_to_add)
         end
 
-        add_in_file(file_location, line_to_match, content_to_add)
+        puts("Success 🎉🎉\n\n")
+      end
+
+      def add_permit_to_ability_model(top_level_model, associated_model)
+        file_location = "app/models/ability.rb"
+        line_to_match = "def initialize(user)"
+        content_to_add = "\n    permit user, through: :#{top_level_model.downcase.pluralize}, parent: :#{associated_model.downcase} if user.present?\n"
+
+        puts("Adding 'permit' to #{associated_model}\n\n")
+
+        if line_exists_in_file?(file_location, content_to_add)
+          message = "#{remove_new_lines_and_spaces(content_to_add)} already exists in #{associated_model}!!\n\n"
+
+          line_already_exists(message)
+        else
+          add_in_file(file_location, line_to_match, content_to_add)
+        end
+
+        puts("Success 🎉🎉\n\n")
+      end
+
+      def add_concern_to_user
+        file_location = "app/models/user.rb"
+        line_to_match = "class User < ApplicationRecord"
+        content_to_add = "\n  include Roles::User\n"
+
+        puts("Adding 'include Roles::User' to User\n\n")
+
+        if line_exists_in_file?(file_location, content_to_add)
+          message = "#{remove_new_lines_and_spaces(content_to_add)} already exists in User!!\n\n"
+
+          line_already_exists(message)
+        else
+          add_in_file(file_location, line_to_match, content_to_add)
+        end
 
         puts("Success 🎉🎉\n\n")
       end

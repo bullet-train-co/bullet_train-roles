@@ -5,7 +5,7 @@ require_relative "lib/bullet_train//roles/version"
 Gem::Specification.new do |spec|
   spec.name = "bullet_train-roles"
   spec.version = Roles::VERSION
-  spec.authors = ["Prabin Poudel", "Andrew Culver"]
+  spec.authors = ["Adam Pallozzi", "Andrew Culver", "Prabin Poudel"]
   spec.email = %w[andrew.culver@gmail.com]
 
   spec.summary = "Yaml-backed ApplicationHash for CanCan Roles"
