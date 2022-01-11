@@ -27,9 +27,6 @@ module BulletTrain
 
         associated_model = ask("Which model/association of #{top_level_model} do you consider to be the Team? (Default to Team)") || "Team"
 
-        # Asks for a model we can setup some default permissions for.
-        # TODO: follow back Andrew on question about this in Slack
-
         add_permit_to_ability_model(top_level_model, associated_model)
       end
 

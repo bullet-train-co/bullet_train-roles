@@ -11,3 +11,5 @@
 
 test/dummy/tmp/*
 test/dummy/log/*
+
+.byebug_history
