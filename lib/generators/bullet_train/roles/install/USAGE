@@ -6,6 +6,8 @@ Example:
 
     This will:
         create config/models/roles.yml
-        create migration file to add role_ids to top level model
-        add include Role::Support to top level model
+        create migration file to add role_ids to top level model if database is postgresql
+        add 'set_default_role_ids' callback to top level model if database is not postgresql
+        add 'include Role::Support' to top level model
         add permit line to app/models/ability.rb
+        add 'include Roles::User' to User model
