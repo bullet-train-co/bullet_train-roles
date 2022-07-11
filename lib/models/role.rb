@@ -89,9 +89,9 @@ class Role < ActiveYaml::Base
     !default?
   end
 
-  def ability_generator(user, through, parent, intermediary)
+  def ability_generator(user, through, parent, intermediary, cache)
     models.each do |model_name, _|
-      ag = AbilityGenerator.new(self, model_name, user, through, parent, intermediary)
+      ag = AbilityGenerator.new(self, model_name, user, through, parent, intermediary, cache)
       yield(ag)
     end
   end
@@ -125,7 +125,7 @@ class Role < ActiveYaml::Base
   class AbilityGenerator
     attr_reader :model
 
-    def initialize(role, model_name, user, through, parent_name, intermediary = nil)
+    def initialize(role, model_name, user, through, parent_name, intermediary, cache)
       begin
         @model = model_name.constantize
       rescue NameError
@@ -136,7 +136,7 @@ class Role < ActiveYaml::Base
       @ability_data = role.models[model_name]
       @through = through
       @parent = user.send(through).reflect_on_association(parent_name)&.klass
-      @parent_ids = user.parent_ids_for(@role, @through, parent_name) if @parent
+      @parent_ids = user.parent_ids_for(@role, @through, parent_name, from_db_cache: cache) if @parent
       @intermediary = intermediary
       @intermediary_class = @model.reflect_on_association(intermediary)&.class_name&.constantize if @intermediary.present?
     end
