@@ -21,7 +21,7 @@ module Roles
         role = nil if role.default?
         new_value = send(through).with_role(role).distinct.pluck(parent_id_column)
         current_cache = ability_cache || {}
-        current_cache[key] == new_value
+        current_cache[key] = new_value
         update_column :ability_cache, current_cache if from_db_cache
         @_parent_ids_for_cache[key] = new_value
         # TODO Maybe we should make ability caching a default feature of the gem?
