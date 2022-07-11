@@ -10,7 +10,7 @@ module Roles
       def parent_ids_for(role, through, parent, from_db_cache: false)
         parent_id_column = "#{parent}_id"
         key = "#{role.key}_#{through}_#{parent_id_column}s"
-        return ability_cache[key] if from_db_cache && respond_to?(:ability_cache) && ability_cache[key].present?
+        return ability_cache[key] if from_db_cache && respond_to?(:ability_cache) && ability_cache.is_a?(Hash) && ability_cache[key].present?
 
         @_parent_ids_for_cache ||= {}
         return @_parent_ids_for_cache[key] if @_parent_ids_for_cache[key]
