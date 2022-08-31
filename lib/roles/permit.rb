@@ -14,17 +14,17 @@ module Roles
       end
 
       permissions.each do |permission|
-        can(permission[1], permission[2].constantize, permission[3]) if permission[0]
+        can(permission.actions, permission.model.constantize, permission.condition) unless permission.is_debug
       end
 
       if debug
         puts "###########################"
         puts "Auto generated `ability.rb` content:"
         permissions.map do |permission|
-          if permission[0]
-            puts  "can #{permission[1]}, #{permission[2]}, #{permission[3]}"
+          if permission.is_debug
+            puts permission.info
           else
-            puts permission[1]
+            puts  "can #{permission.actions}, #{permission.model}, #{permission.condition}"
           end
         end
         puts "############################"
@@ -36,14 +36,14 @@ module Roles
       permissions = []
       user.send(through).map(&:roles).flatten.uniq.each do |role|
         unless added_roles.include?(role)
-          permissions << [false, "########### ROLE: #{role.key}"]
+          permissions << OpenStruct.new(is_debug: true, info: "########### ROLE: #{role.key}")
           permissions += add_abilities_for(role, user, through, parent, intermediary)
           added_roles << role
         end
 
         role.included_roles.each do |included_role|
           unless added_roles.include?(included_role)
-            permissions << [false, "############# INCLUDED ROLE: #{included_role.key}"]
+            permissions << OpenStruct.new(is_debug: true, info: "############# INCLUDED ROLE: #{included_role.key}")
             permissions += add_abilities_for(included_role, user, through, parent, intermediary)
           end
         end
@@ -53,13 +53,12 @@ module Roles
     end
 
     def add_abilities_for(role, user, through, parent, intermediary)
-      output = []
       permissions = []
       role.ability_generator(user, through, parent, intermediary) do |ag|
         if ag.valid?
-          permissions << [true, ag.actions, ag.model.to_s, ag.condition]
+          permissions << OpenStruct.new(is_debug: false, actions: ag.actions, model: ag.model.to_s, condition: ag.condition)
         else
-          permissions << [false, "# #{ag.model} does not respond to #{parent} so we're not going to add an ability for the #{through} context"]
+          permissions << OpenStruct.new(is_debug: true, info: "# #{ag.model} does not respond to #{parent} so we're not going to add an ability for the #{through} context")
         end
       end
       permissions
