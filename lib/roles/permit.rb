@@ -24,7 +24,7 @@ module Roles
           if permission.is_debug
             puts permission.info
           else
-            puts  "can #{permission.actions}, #{permission.model}, #{permission.condition}"
+            puts "can #{permission.actions}, #{permission.model}, #{permission.condition}"
           end
         end
         puts "############################"
@@ -55,10 +55,10 @@ module Roles
     def add_abilities_for(role, user, through, parent, intermediary)
       permissions = []
       role.ability_generator(user, through, parent, intermediary) do |ag|
-        if ag.valid?
-          permissions << OpenStruct.new(is_debug: false, actions: ag.actions, model: ag.model.to_s, condition: ag.condition)
+        permissions << if ag.valid?
+          OpenStruct.new(is_debug: false, actions: ag.actions, model: ag.model.to_s, condition: ag.condition)
         else
-          permissions << OpenStruct.new(is_debug: true, info: "# #{ag.model} does not respond to #{parent} so we're not going to add an ability for the #{through} context")
+          OpenStruct.new(is_debug: true, info: "# #{ag.model} does not respond to #{parent} so we're not going to add an ability for the #{through} context")
         end
       end
       permissions
