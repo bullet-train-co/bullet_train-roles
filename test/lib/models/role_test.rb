@@ -139,7 +139,7 @@ class RoleTest < ActiveSupport::TestCase
       @membership = FactoryBot.create :membership, user: @admin_user, team: @admin_user.current_team, role_ids: [Role.admin.id]
       @admin_ability = Ability.new(@admin_user)
       @admin_role = Role.admin
-      @ability_generator = Role::AbilityGenerator.new(@admin_role, "Team", @admin_user, :memberships, :team)
+      @ability_generator = Role::AbilityGenerator.new(@admin_role, "Team", @admin_user, :memberships, :team, nil, false)
     end
 
     test "The ability generator is valid?" do
@@ -147,7 +147,7 @@ class RoleTest < ActiveSupport::TestCase
     end
 
     test "if the model does not respond to the parent model, it should not be valid" do
-      ability_generator = Role::AbilityGenerator.new(@admin_role, "Team", @admin_user, :memberships, :tangible_thing)
+      ability_generator = Role::AbilityGenerator.new(@admin_role, "Team", @admin_user, :memberships, :tangible_thing, nil, false)
 
       refute ability_generator.valid?
     end
@@ -161,7 +161,7 @@ class RoleTest < ActiveSupport::TestCase
     end
 
     test "It outputs the correct actions when passed in crud" do
-      ability_generator = Role::AbilityGenerator.new(Role.find_by_key("crud_role"), "Team", @admin_user, :memberships, :team)
+      ability_generator = Role::AbilityGenerator.new(Role.find_by_key("crud_role"), "Team", @admin_user, :memberships, :team, nil, false)
       expected_output = %i[create read update destroy]
       assert_empty expected_output - ability_generator.actions
     end
@@ -185,19 +185,19 @@ class RoleTest < ActiveSupport::TestCase
 
       skip "You have no abilities with array conditions defined for a model.  Skipping this test." unless role && model
 
-      ability_generator = Role::AbilityGenerator.new(role, model, @admin_user, :memberships, :team)
+      ability_generator = Role::AbilityGenerator.new(role, model, @admin_user, :memberships, :team, nil, false)
 
       assert_empty expected_output - ability_generator.actions
     end
 
     test "it outputs the correct condition hash for a child object" do
-      ability_generator = Role::AbilityGenerator.new(@admin_role, "Membership", @admin_user, :memberships, :team)
+      ability_generator = Role::AbilityGenerator.new(@admin_role, "Membership", @admin_user, :memberships, :team, nil, false)
 
       assert_equal ({team_id: [@admin_user.teams.first.id]}), ability_generator.condition
     end
 
     test "If an object responds to team_id but it is not a database column for that object, create the permissing through the team association" do
-      ability_generator = Role::AbilityGenerator.new(@admin_role, "Document", @admin_user, :memberships, :team)
+      ability_generator = Role::AbilityGenerator.new(@admin_role, "Document", @admin_user, :memberships, :team, nil, false)
       # Note: our original technique of using method_defined? breaks in ActiveRecord 7 because AR7 adds a team_id method by
       # default when you add
       # has_one :team, through: :membership
@@ -206,7 +206,7 @@ class RoleTest < ActiveSupport::TestCase
     end
 
     test "when the parent and the model are the same class, the condition hash checks the id attribute directly" do
-      ability_generator = Role::AbilityGenerator.new(@admin_role, "Team", @admin_user, :memberships, :team)
+      ability_generator = Role::AbilityGenerator.new(@admin_role, "Team", @admin_user, :memberships, :team, nil, false)
 
       assert_equal ({id: [@admin_user.teams.first.id]}), ability_generator.condition
     end
@@ -214,7 +214,7 @@ class RoleTest < ActiveSupport::TestCase
     test "possible_parent_associations returns all namespace possibilities" do
       expected_output = %i[creative_concept absolutely_abstract_creative_concept scaffolding_absolutely_abstract_creative_concept]
 
-      ability_generator = Role::AbilityGenerator.new(@admin_role, "Scaffolding::AbsolutelyAbstract::CreativeConcept", @admin_user, :scaffolding_absolutely_abstract_creative_concepts_collaborators, :creative_concept)
+      ability_generator = Role::AbilityGenerator.new(@admin_role, "Scaffolding::AbsolutelyAbstract::CreativeConcept", @admin_user, :scaffolding_absolutely_abstract_creative_concepts_collaborators, :creative_concept, nil, false)
 
       assert_empty expected_output - ability_generator.possible_parent_associations
     end

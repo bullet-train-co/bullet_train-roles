@@ -125,7 +125,7 @@ class Role < ActiveYaml::Base
   class AbilityGenerator
     attr_reader :model
 
-    def initialize(role, model_name, user, through, parent_name, intermediary, cache)
+    def initialize(role, model_name, user, through, parent_name, intermediary, enable_db_cache)
       begin
         @model = model_name.constantize
       rescue NameError
@@ -136,7 +136,7 @@ class Role < ActiveYaml::Base
       @ability_data = role.models[model_name]
       @through = through
       @parent = user.send(through).reflect_on_association(parent_name)&.klass
-      @parent_ids = user.parent_ids_for(@role, @through, parent_name, from_db_cache: cache) if @parent
+      @parent_ids = user.parent_ids_for(@role, @through, parent_name, from_db_cache: enable_db_cache) if @parent
       @intermediary = intermediary
       @intermediary_class = @model.reflect_on_association(intermediary)&.class_name&.constantize if @intermediary.present?
     end
