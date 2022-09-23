@@ -42,5 +42,19 @@ class PermitTest < ActiveSupport::TestCase
       @admin_ability.permit(@admin_user, through: :memberships, parent: :team, rails_cache_key: nil)
       assert Rails.cache.instance_variable_get(:@data).keys.none?
     end
+
+    test "it does not save to the database by default" do
+      @admin_user.invalidate_ability_cache
+      assert @admin_user.ability_cache.empty?
+      @admin_ability.permit(@admin_user, through: :memberships, parent: :team)
+      assert @admin_user.reload.ability_cache.empty?
+    end
+
+    test "It saves to the database when enable_db_cache is true" do
+      @admin_user.invalidate_ability_cache
+      assert @admin_user.ability_cache.empty?
+      @admin_ability.permit(@admin_user, through: :memberships, parent: :team, enable_db_cache: true)
+      refute @admin_user.reload.ability_cache.empty?
+    end
   end
 end
