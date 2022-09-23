@@ -17,10 +17,16 @@ module Roles
 
         role = nil if role.default?
         new_value = send(through).with_role(role).distinct.pluck(parent_id_column)
-        current_cache = ability_cache || {}
-        current_cache[key] = new_value
-        update_column :ability_cache, current_cache if from_db_cache
         @_parent_ids_for_cache[key] = new_value
+      end
+
+      def write_parent_ids_for_cache_to_db
+        return unless respond_to?(:ability_cache)
+        current_ability_cache = ability_cache || {}
+        return if @_parent_ids_for_cache.nil? || @_parent_ids_for_cache.empty?
+        # TODO - is there an issue where the keys are the same but values have changed?
+        return if (@_parent_ids_for_cache.keys - current_ability_cache.keys).none?
+        update_column :ability_cache, current_ability_cache.merge(@_parent_ids_for_cache)
       end
 
       def invalidate_ability_cache

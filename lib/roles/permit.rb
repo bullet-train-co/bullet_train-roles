@@ -27,6 +27,8 @@ module Roles
         end
       end
 
+      user.write_parent_ids_for_cache_to_db if enable_db_cache
+
       if debug
         puts "###########################"
         puts "Auto generated `ability.rb` content:"
