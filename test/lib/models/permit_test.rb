@@ -1,4 +1,3 @@
-
 # frozen_string_literal: true
 
 require "test_helper"
@@ -14,8 +13,8 @@ class PermitTest < ActiveSupport::TestCase
       permissions = []
       permissions << {
         actions: :download,
-        model: 'User',
-        condition: :all,
+        model: "User",
+        condition: :all
       }
       can_count = @admin_ability.permissions[:can].count
       @admin_ability.assign_permissions(permissions)
@@ -43,6 +42,5 @@ class PermitTest < ActiveSupport::TestCase
       @admin_ability.permit(@admin_user, through: :memberships, parent: :team, rails_cache_key: nil)
       assert Rails.cache.instance_variable_get(:@data).keys.none?
     end
-
   end
 end
